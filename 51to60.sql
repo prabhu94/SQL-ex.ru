@@ -125,3 +125,17 @@ FROM   income_o
 WHERE  point NOT IN (SELECT point
                      FROM   outcome_o)
 GROUP  BY point  
+		    
+--Q60
+ SELECT point,
+       Sum(inc) - Sum(out)
+FROM   (SELECT COALESCE(i.point, o.point) AS point,
+               COALESCE(i.date, o.date)   AS date,
+               COALESCE(i.inc, 0)         AS inc,
+               COALESCE(o.out, 0)         AS out
+        FROM   income_o i
+               FULL JOIN outcome_o o
+                      ON i.point = o.point
+                         AND i.date = o.date) x
+WHERE  date < '2001-04-15'
+GROUP  BY point  
